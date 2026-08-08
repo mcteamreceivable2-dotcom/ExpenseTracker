@@ -3,81 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 Expense Tracker Pro · Gradient Themes</title>
+    <title>💰 Expense Tracker Pro · Debts</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        :root {
-            --bg: #f0f2f5;
-            --card-bg: #ffffff;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --danger: #ef4444;
-            --text: #1f2937;
-            --text-light: #6b7280;
-            --border: #e5e7eb;
-            --accent-green: #10b981;
-            --income-green: #059669;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06);
-            --radius: 12px;
-            --radius-sm: 8px;
-            --gradient-start: #f0f2f5;
-            --gradient-end: #e5e7eb;
-            --card-opacity: 1;
-        }
-        body.dark {
-            --bg: #111827;
-            --card-bg: #1f2937;
-            --primary: #818cf8;
-            --primary-hover: #6366f1;
-            --danger: #f87171;
-            --text: #f1f5f9;
-            --text-light: #9ca3af;
-            --border: #374151;
-        }
+        :root { --bg: #f0f2f5; --card-bg: #ffffff; --primary: #4f46e5; --primary-hover: #4338ca; --danger: #ef4444; --text: #1f2937; --text-light: #6b7280; --border: #e5e7eb; --accent-green: #10b981; --income-green: #059669; --shadow: 0 1px 3px rgba(0,0,0,0.06); --radius: 12px; --radius-sm: 8px; }
+        body.dark { --bg: #111827; --card-bg: #1f2937; --primary: #818cf8; --primary-hover: #6366f1; --danger: #f87171; --text: #f1f5f9; --text-light: #9ca3af; --border: #374151; }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            background-attachment: fixed;
-            color: var(--text);
-            min-height: 100vh;
-            line-height: 1.6;
-            transition: background 0.5s, color 0.3s;
-            display: flex; flex-direction: column;
-        }
-        .header {
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 20px;
-            position: sticky; top: 0; z-index: 100;
-            box-shadow: var(--shadow);
-            display: flex; justify-content: space-between;
-            align-items: center; flex-wrap: wrap; gap: 10px;
-            backdrop-filter: blur(10px);
-            opacity: var(--card-opacity);
-        }
+        body { font-family: 'Inter', system-ui, sans-serif; background: linear-gradient(135deg, var(--gradient-start, #f0f2f5), var(--gradient-end, #e5e7eb)); background-attachment: fixed; color: var(--text); min-height: 100vh; line-height: 1.6; transition: background 0.5s, color 0.3s; display: flex; flex-direction: column; }
+        .header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 12px 20px; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; backdrop-filter: blur(10px); opacity: var(--card-opacity, 1); }
         .logo { font-size:1.4rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:8px; }
         .auth-area { display:flex; gap:10px; align-items:center; }
         .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:var(--radius-sm); font-weight:600; font-size:0.9rem; cursor:pointer; transition:0.2s; font-family:inherit; }
         .btn-primary { background:var(--primary); color:#fff; } .btn-primary:hover { background:var(--primary-hover); }
         .btn-outline { background:var(--card-bg); color:var(--text); border:2px solid var(--border); padding:6px 12px; border-radius:20px; font-size:0.8rem; }
-        .btn-danger { background:transparent; color:var(--danger); padding:4px 8px; border-radius:6px; font-size:0.75rem; }
+        .btn-danger { background:var(--danger); color:white; } .btn-danger:hover { background:#dc2626; }
+        .btn-icon { background:transparent; border:none; cursor:pointer; font-size:1rem; padding:4px 6px; border-radius:4px; transition:0.2s; }
+        .btn-icon.edit-icon { color: var(--primary); }
+        .btn-icon.delete-icon { color: var(--danger); }
+        .btn-icon:hover { background: rgba(0,0,0,0.05); }
         .dashboard { max-width:1400px; margin:0 auto; padding:20px; flex:1; display:grid; gap:20px; grid-template-columns: 300px 1fr 320px; }
         @media (max-width:1200px) { .dashboard { grid-template-columns: 1fr 1fr; } .right-panel { grid-column: span 2; } }
         @media (max-width:800px) { .dashboard { grid-template-columns: 1fr; } .right-panel { grid-column: auto; } }
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 18px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-            opacity: var(--card-opacity);
-        }
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); border: 1px solid var(--border); backdrop-filter: blur(10px); opacity: var(--card-opacity, 1); }
         .card-header { font-weight:700; font-size:1rem; margin-bottom:14px; display:flex; align-items:center; gap:6px; }
         .form-group { margin-bottom:12px; }
         .form-group label { display:block; font-weight:600; font-size:0.8rem; margin-bottom:4px; color:var(--text-light); text-transform:uppercase; }
@@ -86,11 +37,7 @@
         .filter-row { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
         .month-filter-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
         .month-filter-row select { padding:6px 12px; border:2px solid var(--border); border-radius:20px; font-size:0.8rem; background:var(--card-bg); color:var(--text); font-weight:600; cursor:pointer; }
-        .list-container {
-            max-height:350px; overflow-y:auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
+        .list-container { max-height:350px; overflow-y:auto; scrollbar-width: none; -ms-overflow-style: none; }
         .list-container::-webkit-scrollbar { display: none; }
         .list-item { display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:var(--radius-sm); margin-bottom:6px; background:var(--bg); border:1px solid transparent; }
         .list-item:hover { border-color:var(--primary); background:var(--card-bg); }
@@ -122,15 +69,15 @@
         .btn-report { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
         .btn-report:hover { background: var(--primary-hover); }
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:300; display:flex; align-items:center; justify-content:center; }
-        .modal-content {
-            background:var(--card-bg); padding:24px; border-radius:var(--radius);
-            width:90%; max-width:700px; max-height:90vh; overflow-y:auto;
-            box-shadow:0 20px 60px rgba(0,0,0,0.3);
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
+        .modal-content { background:var(--card-bg); padding:24px; border-radius:var(--radius); width:90%; max-width:700px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); scrollbar-width: none; -ms-overflow-style: none; }
         .modal-content::-webkit-scrollbar { display: none; }
         #iconPickerGrid button:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .cancel-btn { background: transparent; color: var(--text-light); border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+        .cancel-btn:hover { background: var(--bg); }
+        .debt-item { display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid var(--border); gap:10px; }
+        .debt-info { flex:1; }
+        .debt-amount { font-weight:700; }
+        .debt-status { font-size:0.75rem; padding:2px 8px; border-radius:10px; }
     </style>
 </head>
 <body>
@@ -164,7 +111,7 @@
 
     <div id="appContent" style="display:none; flex-direction:column; flex:1;">
         <header class="header">
-            <div class="logo">💰 Expense Tracker <span style="font-size:0.8rem;">Gradient</span></div>
+            <div class="logo">💰 Expense Tracker <span style="font-size:0.8rem;">Debts</span></div>
             <div class="auth-area">
                 <span id="userDisplay"></span>
                 <button class="btn-outline" id="signOutBtn">🚪 Sign Out</button>
@@ -176,7 +123,7 @@
             <!-- LEFT COLUMN -->
             <div>
                 <div class="card" style="margin-bottom:20px;">
-                    <div class="card-header">📝 Add Expense</div>
+                    <div class="card-header">📝 Add Expense <span id="editModeIndicator" style="font-size:0.8rem; color:var(--primary); display:none;">(Editing)</span></div>
                     <form id="expenseForm">
                         <div class="form-group"><label>Description</label><input type="text" id="desc" required></div>
                         <div class="form-row">
@@ -184,7 +131,10 @@
                             <div class="form-group"><label>Date</label><input type="date" id="date" required></div>
                         </div>
                         <div class="form-group"><label>Category</label><select id="category" required></select></div>
-                        <button type="submit" class="btn btn-primary" style="width:100%;">➕ Add Expense</button>
+                        <div style="display:flex; gap:8px;">
+                            <button type="submit" class="btn btn-primary" style="flex:1;" id="expenseSubmitBtn">➕ Add Expense</button>
+                            <button type="button" class="cancel-btn" id="cancelEditBtn" style="display:none;">Cancel</button>
+                        </div>
                     </form>
                 </div>
                 <div class="card" style="margin-bottom:20px;">
@@ -217,16 +167,13 @@
                         <option value="EUR">🇪🇺 EUR (€)</option><option value="GBP">🇬🇧 GBP (£)</option><option value="JPY">🇯🇵 JPY (¥)</option>
                     </select></div>
                 </div>
-                <!-- 🆕 Gradient Theme Selector -->
                 <div class="card">
                     <div class="card-header">🎨 Theme</div>
                     <div class="form-group"><label>Gradient Theme</label><select id="gradientThemeSelect">
-                        <option value="default">⚪ Default</option>
-                        <option value="sunset">🌅 Sunset</option>
+                        <option value="default">⚪ Default</option><option value="sunset">🌅 Sunset</option>
                         <option value="ocean">🌊 Ocean</option>
                         <option value="forest">🌲 Forest</option>
-                        <option value="midnight">🌙 Midnight</option>
-                        <option value="crimson">🌹 Crimson</option>
+                        <option value="midnight">🌙 Midnight</option><option value="crimson">🌹 Crimson</option>
                     </select></div>
                 </div>
             </div>
@@ -239,6 +186,7 @@
                         <select id="monthFilterSelect"><option value="all">All Months</option></select>
                         <button class="btn-outline" id="thisMonthBtn">📅 This Month</button>
                         <button class="btn-outline" id="budgetModalBtn" style="background:#eef2ff; border-color:var(--primary); color:var(--primary);">🎯 Budgets</button>
+                        <button class="btn-outline" id="debtModalBtn" style="background:#fff7ed; border-color:#f97316; color:#f97316;">💳 Debts</button>
                     </div>
                     <div class="filter-row" id="filterRowContainer"></div>
                     <div class="list-container" id="expenseList"></div>
@@ -310,28 +258,70 @@
         </div>
     </div>
 
+    <!-- Debt/Loan Tracker Modal -->
+    <div class="modal-overlay" id="debtModal" style="display:none;">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h3>💳 Debt & Loan Tracker</h3>
+                <button class="btn-outline" id="closeDebtModal" style="padding:4px 10px;">✖️</button>
+            </div>
+            <div class="card" style="margin-bottom:12px;">
+                <h4>Add Debt</h4>
+                <form id="debtForm">
+                    <div class="form-row">
+                        <div class="form-group"><label>Description</label><input type="text" id="debtDesc" required></div>
+                        <div class="form-group"><label>Amount</label><input type="number" id="debtAmount" step="0.01" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="debtType" required>
+                                <option value="borrow">I Owe (Utang)</option>
+                                <option value="lend">I'm Owed (Pautang)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Person</label><input type="text" id="debtPerson" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Due Date</label><input type="date" id="debtDueDate"></div>
+                        <div class="form-group"><label>Status</label><select id="debtStatus"><option value="unpaid">Unpaid</option><option value="paid">Paid</option></select></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">➕ Add Debt</button>
+                    <input type="hidden" id="editingDebtId">
+                    <button type="button" class="cancel-btn" id="cancelDebtEdit" style="display:none; width:100%; margin-top:8px;">Cancel Edit</button>
+                </form>
+            </div>
+            <div id="debtsListContainer" class="list-container" style="max-height:300px;"></div>
+            <div style="display:flex; justify-content:space-between; margin-top:12px; font-weight:600;">
+                <span>💸 Total Owed: <span id="totalOwed">$0.00</span></span>
+                <span>💰 Total Lend: <span id="totalLend">$0.00</span></span>
+                <span>⚖️ Net: <span id="netDebt">$0.00</span></span>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
-        // ==================== FIREBASE CONFIG ====================
-	const firebaseConfig = {
-	  apiKey: "AIzaSyAqDap0sRP7qxdz1GwxtDWge4MAQWUN3Dw",
-	  authDomain: "expensetracker-fa127.firebaseapp.com",
-	  projectId: "expensetracker-fa127",
-	  storageBucket: "expensetracker-fa127.firebasestorage.app",
-	  messagingSenderId: "1098604609593",
-	  appId: "1:1098604609593:web:5272113d42957d0f148de8"
-	};
-        // =====================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAqDap0sRP7qxdz1GwxtDWge4MAQWUN3Dw",
+            authDomain: "expensetracker-fa127.firebaseapp.com",
+            projectId: "expensetracker-fa127",
+            storageBucket: "expensetracker-fa127.firebasestorage.app",
+            messagingSenderId: "1098604609593",
+            appId: "1:1098604609593:web:5272113d42957d0f148de8"
+        };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
         // ==================== STATE ====================
-        let expenses = [], incomes = [], currentFilter = 'all', currentMonthFilter = 'all';
+        let expenses = [], incomes = [], debts = [];
+        let currentFilter = 'all', currentMonthFilter = 'all';
         let categoryBudgets = {}, categories = {};
         let theme = 'light', gradientTheme = 'default', currency = 'USD', currentUser = null;
+        let editingExpenseId = null, editingDebtId = null;
         let pieChart, trendChart, previousSpendingPcts = {};
         const currencySymbols = { USD:'$', PHP:'₱', EUR:'€', GBP:'£', JPY:'¥' };
 
@@ -356,7 +346,6 @@
             '🐶','🐱','⛽','🛢️','🔧','🔨','🛒','🧹','🌡️','💧','⚡','🔥','📦','🎓','📅','💼'
         ];
 
-        // Gradient theme definitions
         const gradientThemes = {
             default: { start: '#f0f2f5', end: '#e5e7eb', label: 'Default' },
             sunset: { start: '#ff9a9e', end: '#fecfef', label: 'Sunset' },
@@ -375,7 +364,7 @@
             toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // ==================== IDLE TIMER ====================
+        // Idle Timer (15min)
         const IDLE_TIMEOUT = 15 * 60 * 1000, WARNING_BEFORE = 60 * 1000;
         let idleWarningTimer, idleLogoutTimer, isUserIdle = false;
         function resetIdleTimer() {
@@ -387,54 +376,34 @@
         function showIdleWarning() { if (document.getElementById('appContent').style.display === 'flex') showToast('⏳ Logging out in 1 minute…', 'error', WARNING_BEFORE); isUserIdle = true; }
         function performIdleLogout() {
             if (currentUser) auth.signOut();
-            else { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appContent').style.display = 'none'; stopListeners(); expenses = []; incomes = []; document.getElementById('signInForm').reset(); document.getElementById('signUpForm').reset(); document.getElementById('tabSignIn').click(); showToast('Logged out due to inactivity', 'error'); }
+            else { document.getElementById('loginScreen').style.display = 'flex'; document.getElementById('appContent').style.display = 'none'; stopListeners(); expenses = []; incomes = []; debts = []; document.getElementById('signInForm').reset(); document.getElementById('signUpForm').reset(); document.getElementById('tabSignIn').click(); showToast('Logged out due to inactivity', 'error'); }
         }
         function clearIdleTimers() { clearTimeout(idleWarningTimer); clearTimeout(idleLogoutTimer); }
         ['mousemove','keydown','click','scroll','touchstart'].forEach(evt => document.addEventListener(evt, resetIdleTimer, {passive:true}));
 
-        // ==================== APPLY GRADIENT THEME ====================
-        function applyGradientTheme() {
-            const root = document.documentElement;
-            const g = gradientThemes[gradientTheme] || gradientThemes.default;
-            root.style.setProperty('--gradient-start', g.start);
-            root.style.setProperty('--gradient-end', g.end);
-
-            // Adjust card opacity for dark mode or midnight theme
-            const isMidnight = gradientTheme === 'midnight';
-            const isDark = theme === 'dark';
-            if (isMidnight || isDark) {
-                root.style.setProperty('--card-opacity', '0.92');
-            } else {
-                root.style.setProperty('--card-opacity', '0.85');
-            }
-        }
-
-        // ==================== FIREBASE SYNC ====================
-        let unsubscribeExpenses, unsubscribeIncomes, unsubscribeUserDoc;
+        // Firestore Sync
+        let unsubscribeExpenses, unsubscribeIncomes, unsubscribeUserDoc, unsubscribeDebts;
         function startListeners(uid) {
             unsubscribeExpenses = db.collection('users').doc(uid).collection('expenses').onSnapshot(snap => { expenses = []; snap.forEach(d => expenses.push({id:d.id, ...d.data()})); renderAll(); });
             unsubscribeIncomes = db.collection('users').doc(uid).collection('incomes').onSnapshot(snap => { incomes = []; snap.forEach(d => incomes.push({id:d.id, ...d.data()})); renderAll(); });
+            unsubscribeDebts = db.collection('users').doc(uid).collection('debts').onSnapshot(snap => { debts = []; snap.forEach(d => debts.push({id:d.id, ...d.data()})); renderDebtsList(); });
             unsubscribeUserDoc = db.collection('users').doc(uid).onSnapshot(doc => {
                 if (doc.exists) {
                     const d = doc.data();
-                    theme = d.theme || 'light';
-                    gradientTheme = d.gradientTheme || 'default';
+                    theme = d.theme || 'light'; gradientTheme = d.gradientTheme || 'default';
                     currency = d.currency || 'USD';
                     categoryBudgets = d.categoryBudgets || {};
                     categories = d.categories || {};
                 }
                 if (!categories || Object.keys(categories).length === 0) categories = { ...defaultCategories };
-                applyTheme();
-                applyGradientTheme();
-                document.getElementById('currencySelect').value = currency;
+                applyTheme(); document.getElementById('currencySelect').value = currency;
                 document.getElementById('gradientThemeSelect').value = gradientTheme;
-                updateDynamicUI();
-                renderAll();
+                updateDynamicUI(); renderAll();
             });
         }
-        function stopListeners() { if (unsubscribeExpenses) unsubscribeExpenses(); if (unsubscribeIncomes) unsubscribeIncomes(); if (unsubscribeUserDoc) unsubscribeUserDoc(); }
+        function stopListeners() { if (unsubscribeExpenses) unsubscribeExpenses(); if (unsubscribeIncomes) unsubscribeIncomes(); if (unsubscribeDebts) unsubscribeDebts(); if (unsubscribeUserDoc) unsubscribeUserDoc(); }
 
-        // ==================== AUTH ====================
+        // Auth
         document.getElementById('tabSignIn').addEventListener('click', () => { document.getElementById('tabSignIn').classList.add('active'); document.getElementById('tabSignUp').classList.remove('active'); document.getElementById('formSignIn').classList.add('active'); document.getElementById('formSignUp').classList.remove('active'); document.getElementById('signUpForm').reset(); });
         document.getElementById('tabSignUp').addEventListener('click', () => { document.getElementById('tabSignUp').classList.add('active'); document.getElementById('tabSignIn').classList.remove('active'); document.getElementById('formSignUp').classList.add('active'); document.getElementById('formSignIn').classList.remove('active'); document.getElementById('signInForm').reset(); });
         document.getElementById('signInForm').addEventListener('submit', e => { e.preventDefault(); auth.signInWithEmailAndPassword(document.getElementById('signInEmail').value.trim(), document.getElementById('signInPassword').value).catch(err => showToast(err.message,'error')); });
@@ -452,19 +421,19 @@
             } else {
                 currentUser = null;
                 document.getElementById('loginScreen').style.display='flex'; document.getElementById('appContent').style.display='none';
-                stopListeners(); expenses=[]; incomes=[];
+                stopListeners(); expenses=[]; incomes=[]; debts=[];
                 document.getElementById('signInForm').reset(); document.getElementById('signUpForm').reset();
                 document.getElementById('tabSignIn').click(); clearIdleTimers();
             }
         });
 
-        // ==================== LOCAL DATA ====================
+        // Local data
         function loadLocalData() {
-            const raw = localStorage.getItem('expLocalV16');
+            const raw = localStorage.getItem('expLocalFinal');
             if (raw) {
                 try {
                     const d = JSON.parse(raw);
-                    expenses = d.expenses || []; incomes = d.incomes || [];
+                    expenses = d.expenses || []; incomes = d.incomes || []; debts = d.debts || [];
                     theme = d.theme || 'light'; gradientTheme = d.gradientTheme || 'default';
                     currency = d.currency || 'USD';
                     categoryBudgets = d.categoryBudgets || {};
@@ -472,21 +441,38 @@
                 } catch(e) { setDefaults(); }
             } else setDefaults();
             if (!categories || Object.keys(categories).length === 0) categories = { ...defaultCategories };
-            applyTheme(); applyGradientTheme();
-            document.getElementById('currencySelect').value = currency;
+            applyTheme(); document.getElementById('currencySelect').value = currency;
             document.getElementById('gradientThemeSelect').value = gradientTheme;
             updateDynamicUI();
+            renderDebtsList();
         }
-        function saveLocalData() { if (!currentUser) localStorage.setItem('expLocalV16', JSON.stringify({ expenses, incomes, theme, gradientTheme, currency, categoryBudgets, categories })); }
+        function saveLocalData() { if (!currentUser) localStorage.setItem('expLocalFinal', JSON.stringify({ expenses, incomes, debts, theme, gradientTheme, currency, categoryBudgets, categories })); }
         function setDefaults() {
             expenses = [ { id:'e1', desc:'Groceries', amount:85.5, category:'food', date:'2026-08-05' } ];
             incomes = [{ id:'i1', desc:'Salary', amount:3000, date:'2026-08-01' }];
+            debts = [];
             theme = 'light'; gradientTheme = 'default'; currency = 'USD';
             categoryBudgets = { food:300, transport:100 };
             categories = { ...defaultCategories };
         }
 
-        // ==================== DYNAMIC UI ====================
+        function applyGradientTheme() {
+            const root = document.documentElement;
+            const g = gradientThemes[gradientTheme] || gradientThemes.default;
+            root.style.setProperty('--gradient-start', g.start);
+            root.style.setProperty('--gradient-end', g.end);
+            const isMidnight = gradientTheme === 'midnight';
+            const isDark = theme === 'dark';
+            root.style.setProperty('--card-opacity', (isMidnight || isDark) ? '0.92' : '0.85');
+        }
+        function applyTheme() {
+            document.body.classList.toggle('dark', theme==='dark');
+            document.getElementById('themeToggle').textContent = theme==='dark' ? '☀️' : '🌙';
+            applyGradientTheme();
+            if (!currentUser) saveLocalData();
+        }
+        function toggleTheme() { theme = theme==='dark'?'light':'dark'; applyTheme(); if (currentUser) db.collection('users').doc(currentUser.uid).set({theme},{merge:true}); else saveLocalData(); }
+
         function updateDynamicUI() {
             const catSelect = document.getElementById('category');
             catSelect.innerHTML = '<option value="">Select</option>';
@@ -499,34 +485,54 @@
             const allBtn = document.createElement('button');
             allBtn.className = 'btn-outline' + (currentFilter==='all'?' active':'');
             allBtn.textContent = 'All'; allBtn.dataset.filter='all';
+            allBtn.title = 'Show all categories';
             filterRow.appendChild(allBtn);
             Object.keys(categories).forEach(cat => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-outline' + (currentFilter===cat?' active':'');
                 btn.textContent = categories[cat].icon;
                 btn.dataset.filter = cat;
+                btn.title = categories[cat].label;
                 filterRow.appendChild(btn);
             });
         }
 
-        // ==================== CATEGORY BUDGET RENDERING ====================
+        function getMonthKey(d) { const dt = new Date(d+'T00:00:00'); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`; }
+        function getCurrentMonthKey() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; }
+        function formatMonthLabel(k) { const [y,m] = k.split('-'); return new Date(parseInt(y),parseInt(m)-1).toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
+        function updateMonthFilterDropdown() {
+            const sel = document.getElementById('monthFilterSelect');
+            const months = [...new Set(expenses.map(e=>getMonthKey(e.date)))].sort().reverse();
+            const cur = sel.value;
+            sel.innerHTML = '<option value="all">All Months</option>';
+            months.forEach(m => { const o = document.createElement('option'); o.value=m; o.textContent=formatMonthLabel(m); sel.appendChild(o); });
+            if (cur==='all' || months.includes(cur)) sel.value=cur; else { sel.value='all'; currentMonthFilter='all'; }
+        }
+        function filteredExpenses() {
+            let f = [...expenses];
+            if (currentFilter !== 'all') f = f.filter(e => e.category === currentFilter);
+            if (currentMonthFilter !== 'all') f = f.filter(e => getMonthKey(e.date) === currentMonthFilter);
+            return f;
+        }
+        function currentMonthSpent() { const k = getCurrentMonthKey(); return expenses.filter(e=>getMonthKey(e.date)===k).reduce((s,e)=>s+e.amount,0); }
+
         function renderCategoryBudgetsInto(containerId) {
             const container = document.getElementById(containerId);
-            const curKey = getCurrentMonthKey();
-            const spentThisMonth = {};
-            expenses.forEach(exp => { if (getMonthKey(exp.date)===curKey) spentThisMonth[exp.category] = (spentThisMonth[exp.category]||0) + exp.amount; });
+            const monthKey = currentMonthFilter !== 'all' ? currentMonthFilter : null;
+            const spentData = {};
+            expenses.forEach(exp => { if (monthKey ? getMonthKey(exp.date) === monthKey : true) spentData[exp.category] = (spentData[exp.category]||0) + exp.amount; });
             let html = '';
             Object.keys(categories).forEach(cat => {
                 const cfg = categories[cat];
                 const budget = categoryBudgets[cat] || 0;
-                const spent = spentThisMonth[cat] || 0;
-                const pct = budget>0 ? Math.min(100, Math.round((spent/budget)*100)) : 0;
-                const over = budget>0 && spent>budget;
-                let fillClass = over ? 'danger' : (pct>=80 ? 'warning' : 'safe');
+                const spent = spentData[cat] || 0;
+                const pct = budget > 0 ? Math.min(100, Math.round((spent / budget)*100)) : 0;
+                const over = budget > 0 && spent > budget;
+                let fillClass = over ? 'danger' : (pct >= 80 ? 'warning' : 'safe');
                 html += `<div class="cat-budget-row" style="align-items:center;">
                     <div class="cat-label"><span class="expense-category" style="background:${cfg.color}20; color:${cfg.color}">${cfg.icon} ${cfg.label}</span></div>
                     <input type="number" class="cat-budget-input" data-cat="${cat}" value="${budget}" placeholder="0" min="0" step="0.01">
-                    <div class="spent-info">${fmt(spent)} / ${budget>0?fmt(budget):'∞'}</div>
+                    <div class="spent-info">${fmt(spent)} / ${budget > 0 ? fmt(budget) : '∞'}</div>
                     <div class="mini-bar"><div class="mini-fill ${fillClass}" style="width:${pct}%; background:${pct>=100?'var(--danger)':pct>=80?'var(--accent-orange)':'var(--accent-green)'}"></div></div>
                     <button class="btn-outline edit-cat-btn" data-cat="${cat}" style="padding:2px 6px; font-size:0.7rem;">✏️</button>
                     ${!cfg.isDefault ? `<button class="btn-danger delete-cat-btn" data-cat="${cat}" style="padding:2px 6px; font-size:0.7rem;">🗑️</button>` : ''}
@@ -580,27 +586,11 @@
             if (document.getElementById('budgetModal').style.display === 'flex') {
                 renderCategoryBudgetsInto('modalCatBudgetContainer');
             }
+            if (document.getElementById('debtModal').style.display === 'flex') {
+                renderDebtsList();
+            }
         }
 
-        // ==================== MONTH/LIST/CHART ====================
-        function getMonthKey(d) { const dt = new Date(d+'T00:00:00'); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`; }
-        function getCurrentMonthKey() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; }
-        function formatMonthLabel(k) { const [y,m] = k.split('-'); return new Date(parseInt(y),parseInt(m)-1).toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
-        function updateMonthFilterDropdown() {
-            const sel = document.getElementById('monthFilterSelect');
-            const months = [...new Set(expenses.map(e=>getMonthKey(e.date)))].sort().reverse();
-            const cur = sel.value;
-            sel.innerHTML = '<option value="all">All Months</option>';
-            months.forEach(m => { const o = document.createElement('option'); o.value=m; o.textContent=formatMonthLabel(m); sel.appendChild(o); });
-            if (cur==='all' || months.includes(cur)) sel.value=cur; else { sel.value='all'; currentMonthFilter='all'; }
-        }
-        function filteredExpenses() {
-            let f = [...expenses];
-            if (currentFilter !== 'all') f = f.filter(e => e.category === currentFilter);
-            if (currentMonthFilter !== 'all') f = f.filter(e => getMonthKey(e.date) === currentMonthFilter);
-            return f;
-        }
-        function currentMonthSpent() { const k = getCurrentMonthKey(); return expenses.filter(e=>getMonthKey(e.date)===k).reduce((s,e)=>s+e.amount,0); }
         function renderLists() {
             const expList = document.getElementById('expenseList'), incList = document.getElementById('incomeList');
             const filtered = filteredExpenses().sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -608,14 +598,19 @@
             filtered.forEach(exp => {
                 const cfg = categories[exp.category] || {icon:'📦',label:exp.category,color:'#9ca3af'};
                 const div = document.createElement('div'); div.className='list-item';
-                div.innerHTML = `<div style="flex:1;"><strong>${escape(exp.desc)}</strong><div style="font-size:0.75rem;color:var(--text-light);"><span class="expense-category" style="background:${cfg.color}20;color:${cfg.color}">${cfg.icon} ${cfg.label}</span> ${dateFmt(exp.date)}</div></div><div class="item-amount expense">-${fmt(exp.amount)}</div><button class="btn-danger del-btn" data-id="${exp.id}" data-type="expense">🗑️</button>`;
+                div.innerHTML = `
+                    <div style="flex:1;"><strong>${escape(exp.desc)}</strong>
+                    <div style="font-size:0.75rem;color:var(--text-light);"><span class="expense-category" style="background:${cfg.color}20;color:${cfg.color}">${cfg.icon} ${cfg.label}</span> ${dateFmt(exp.date)}</div></div>
+                    <div class="item-amount expense">-${fmt(exp.amount)}</div>
+                    <button class="btn-icon edit-icon edit-expense-btn" data-id="${exp.id}" title="Edit">✏️</button>
+                    <button class="btn-icon delete-icon del-btn" data-id="${exp.id}" data-type="expense" title="Delete">🗑️</button>`;
                 expList.appendChild(div);
             });
             const sortedInc = [...incomes].sort((a,b)=>new Date(b.date)-new Date(a.date));
             incList.innerHTML = sortedInc.length ? '' : '<div style="text-align:center;padding:20px;">No income</div>';
             sortedInc.forEach(inc => {
                 const div = document.createElement('div'); div.className='list-item';
-                div.innerHTML = `<div style="flex:1;"><strong>${escape(inc.desc)}</strong><div style="font-size:0.75rem;color:var(--text-light);">${dateFmt(inc.date)}</div></div><div class="item-amount income">+${fmt(inc.amount)}</div><button class="btn-danger del-btn" data-id="${inc.id}" data-type="income">🗑️</button>`;
+                div.innerHTML = `<div style="flex:1;"><strong>${escape(inc.desc)}</strong><div style="font-size:0.75rem;color:var(--text-light);">${dateFmt(inc.date)}</div></div><div class="item-amount income">+${fmt(inc.amount)}</div><button class="btn-icon delete-icon del-btn" data-id="${inc.id}" data-type="income" title="Delete">🗑️</button>`;
                 incList.appendChild(div);
             });
         }
@@ -634,28 +629,16 @@
             if (trendChart) trendChart.destroy();
             if (sorted.length) trendChart = new Chart(ctx2, { type:'line', data:{ labels: sorted.map(k=>formatMonthLabel(k)), datasets:[{ data: sorted.map(k=>monthly[k]), borderColor:'#4f46e5', backgroundColor:'rgba(79,70,229,0.1)', fill:true, tension:0.2 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } } });
         }
-        function applyTheme() {
-            document.body.classList.toggle('dark', theme==='dark');
-            document.getElementById('themeToggle').textContent = theme==='dark' ? '☀️' : '🌙';
-            applyGradientTheme();
-            if (!currentUser) saveLocalData();
-        }
-        function toggleTheme() { theme = theme==='dark'?'light':'dark'; applyTheme(); if (currentUser) db.collection('users').doc(currentUser.uid).set({theme},{merge:true}); else saveLocalData(); }
 
-        // ==================== CATEGORY ACTIONS ====================
-        async function saveCategoriesToDb() {
-            if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categories }, { merge: true });
-            else saveLocalData();
-        }
+        // Category actions
+        async function saveCategoriesToDb() { if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categories }, { merge: true }); else saveLocalData(); }
         async function saveCategoryBudgetsFn() {
             const inputs = document.querySelectorAll('#modalCatBudgetContainer .cat-budget-input');
             const newBudgets = {};
             inputs.forEach(inp => newBudgets[inp.dataset.cat] = parseFloat(inp.value)||0);
             categoryBudgets = newBudgets;
-            if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categoryBudgets }, { merge: true });
-            else saveLocalData();
-            updateBudgetUI();
-            renderCategoryBudgetsInto('modalCatBudgetContainer');
+            if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categoryBudgets }, { merge: true }); else saveLocalData();
+            updateBudgetUI(); renderCategoryBudgetsInto('modalCatBudgetContainer');
             showToast('Category budgets saved!');
         }
         async function addCustomCategory() {
@@ -668,38 +651,30 @@
             categories[key] = { label: name, icon: '📦', color, isDefault: false };
             categoryBudgets[key] = 0;
             await saveCategoriesToDb();
-            document.getElementById('modalNewCatName').value = '';
-            updateDynamicUI();
-            renderAll();
+            document.getElementById('modalNewCatName').value = ''; updateDynamicUI(); renderAll();
             showToast(`Category "${name}" added!`);
         }
         async function deleteCategory(key) {
             if (!categories[key] || categories[key].isDefault) return;
             if (!confirm(`Delete category "${categories[key].label}"?`)) return;
-            delete categories[key];
-            delete categoryBudgets[key];
+            delete categories[key]; delete categoryBudgets[key];
             await saveCategoriesToDb();
             if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categoryBudgets }, { merge: true });
-            updateDynamicUI();
-            renderAll();
-            showToast('Category deleted.');
+            updateDynamicUI(); renderAll(); showToast('Category deleted.');
         }
 
-        // ==================== MODAL HANDLERS ====================
+        // Budget Modal
         document.getElementById('budgetModalBtn').addEventListener('click', () => {
             document.getElementById('budgetModal').style.display = 'flex';
             renderCategoryBudgetsInto('modalCatBudgetContainer');
         });
-        document.getElementById('closeBudgetModal').addEventListener('click', () => {
-            document.getElementById('budgetModal').style.display = 'none';
-        });
+        document.getElementById('closeBudgetModal').addEventListener('click', () => document.getElementById('budgetModal').style.display = 'none');
         document.getElementById('modalSaveCatBudgetsBtn').addEventListener('click', saveCategoryBudgetsFn);
         document.getElementById('modalAddCatBtn').addEventListener('click', addCustomCategory);
         document.getElementById('modalCatBudgetContainer').addEventListener('click', e => {
             const btn = e.target;
             if (btn.classList.contains('edit-cat-btn')) {
-                const key = btn.dataset.cat;
-                const cat = categories[key];
+                const key = btn.dataset.cat; const cat = categories[key];
                 document.getElementById('editCatKey').value = key;
                 document.getElementById('editCatLabel').value = cat.label;
                 document.getElementById('editCatIcon').value = cat.icon;
@@ -712,13 +687,11 @@
             }
         });
 
-        // ==================== EDIT MODAL & ICON PICKER ====================
+        // Edit Category Modal
         function populateIconPicker() {
-            const grid = document.getElementById('iconPickerGrid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('iconPickerGrid'); grid.innerHTML = '';
             iconList.forEach(icon => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
+                const btn = document.createElement('button'); btn.type = 'button';
                 btn.style.cssText = 'font-size:1.2rem; padding:4px; background:transparent; border:1px solid var(--border); border-radius:4px; cursor:pointer;';
                 btn.textContent = icon;
                 btn.addEventListener('click', () => {
@@ -729,17 +702,11 @@
                 grid.appendChild(btn);
             });
         }
-
         document.getElementById('showIconPickerBtn').addEventListener('click', () => {
             const grid = document.getElementById('iconPickerGrid');
-            if (grid.style.display === 'none' || grid.style.display === '') {
-                populateIconPicker();
-                grid.style.display = 'grid';
-            } else {
-                grid.style.display = 'none';
-            }
+            if (grid.style.display === 'none' || grid.style.display === '') { populateIconPicker(); grid.style.display = 'grid'; }
+            else grid.style.display = 'none';
         });
-
         document.getElementById('saveEditCat').addEventListener('click', async () => {
             const key = document.getElementById('editCatKey').value;
             const label = document.getElementById('editCatLabel').value.trim();
@@ -748,8 +715,7 @@
             if (!label) return;
             categories[key] = { ...categories[key], label, icon, color };
             await saveCategoriesToDb();
-            updateDynamicUI();
-            renderAll();
+            updateDynamicUI(); renderAll();
             document.getElementById('editModal').style.display = 'none';
             document.getElementById('iconPickerGrid').style.display = 'none';
             showToast('Category updated!');
@@ -759,44 +725,89 @@
             document.getElementById('iconPickerGrid').style.display = 'none';
         });
 
-        // ==================== OTHER EVENT BINDINGS ====================
-        document.getElementById('expenseForm').addEventListener('submit', e => {
+        // Expense Edit
+        document.getElementById('expenseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const desc = document.getElementById('desc').value.trim();
-            const amount = +document.getElementById('amount').value;
-            const date = document.getElementById('date').value;
-            const category = document.getElementById('category').value;
-            if (!desc || amount<=0 || !date || !category) return showToast('Fill all fields','error');
-            addExpense(desc, amount, date, category);
+            const desc = document.getElementById('desc').value.trim(), amount = parseFloat(document.getElementById('amount').value);
+            const date = document.getElementById('date').value, category = document.getElementById('category').value;
+            if (!desc || isNaN(amount) || amount<=0 || !date || !category) return showToast('Fill all fields','error');
+
+            if (editingExpenseId) {
+                const updated = { desc, amount, date, category };
+                if (currentUser) {
+                    await db.collection('users').doc(currentUser.uid).collection('expenses').doc(editingExpenseId).update(updated);
+                } else {
+                    const idx = expenses.findIndex(e => e.id === editingExpenseId);
+                    if (idx > -1) expenses[idx] = { id: editingExpenseId, ...updated };
+                    saveLocalData(); renderAll();
+                }
+                cancelEditMode();
+                showToast('Expense updated!');
+            } else {
+                const exp = { desc, amount, date, category };
+                if (currentUser) {
+                    await db.collection('users').doc(currentUser.uid).collection('expenses').add(exp);
+                } else {
+                    exp.id = 'e'+Date.now(); expenses.push(exp); saveLocalData(); renderAll();
+                }
+                showToast('Expense added!');
+            }
             document.getElementById('expenseForm').reset();
             document.getElementById('date').value = new Date().toISOString().split('T')[0];
-            showToast('Expense added!');
+            if (editingExpenseId) cancelEditMode();
         });
+        document.getElementById('expenseList').addEventListener('click', function(e) {
+            const editBtn = e.target.closest('.edit-expense-btn');
+            if (editBtn) {
+                const id = editBtn.dataset.id;
+                const exp = expenses.find(e => e.id === id);
+                if (exp) {
+                    document.getElementById('desc').value = exp.desc;
+                    document.getElementById('amount').value = exp.amount;
+                    document.getElementById('date').value = exp.date;
+                    document.getElementById('category').value = exp.category;
+                    editingExpenseId = id;
+                    document.getElementById('expenseSubmitBtn').textContent = '✏️ Update Expense';
+                    document.getElementById('editModeIndicator').style.display = 'inline';
+                    document.getElementById('cancelEditBtn').style.display = 'inline-block';
+                }
+            }
+        });
+        document.getElementById('cancelEditBtn').addEventListener('click', cancelEditMode);
+        function cancelEditMode() {
+            editingExpenseId = null;
+            document.getElementById('expenseForm').reset();
+            document.getElementById('date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseSubmitBtn').textContent = '➕ Add Expense';
+            document.getElementById('editModeIndicator').style.display = 'none';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        async function deleteItem(id, type) {
+            if (currentUser) {
+                const collection = type==='expense' ? 'expenses' : 'incomes';
+                await db.collection('users').doc(currentUser.uid).collection(collection).doc(id).delete();
+            } else {
+                if (type==='expense') expenses = expenses.filter(e => e.id !== id);
+                else incomes = incomes.filter(i => i.id !== id);
+                saveLocalData(); renderAll();
+            }
+        }
+
+        // Income form
         document.getElementById('incomeForm').addEventListener('submit', e => {
             e.preventDefault();
-            const desc = document.getElementById('incomeDesc').value.trim();
-            const amount = +document.getElementById('incomeAmount').value;
-            const date = document.getElementById('incomeDate').value;
+            const desc = document.getElementById('incomeDesc').value.trim(), amount = +document.getElementById('incomeAmount').value, date = document.getElementById('incomeDate').value;
             if (!desc || amount<=0 || !date) return showToast('Fill all fields','error');
-            addIncome(desc, amount, date);
+            const inc = { desc, amount, date };
+            if (currentUser) db.collection('users').doc(currentUser.uid).collection('incomes').add(inc);
+            else { inc.id = 'i'+Date.now(); incomes.push(inc); saveLocalData(); renderAll(); }
             document.getElementById('incomeForm').reset();
             document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
             showToast('Income added!');
         });
-        async function addExpense(desc, amount, date, category) {
-            const exp = { desc, amount, date, category };
-            if (currentUser) await db.collection('users').doc(currentUser.uid).collection('expenses').add(exp);
-            else { exp.id = 'e'+Date.now(); expenses.push(exp); saveLocalData(); renderAll(); }
-        }
-        async function addIncome(desc, amount, date) {
-            const inc = { desc, amount, date };
-            if (currentUser) await db.collection('users').doc(currentUser.uid).collection('incomes').add(inc);
-            else { inc.id = 'i'+Date.now(); incomes.push(inc); saveLocalData(); renderAll(); }
-        }
-        async function deleteItem(id, type) {
-            if (currentUser) await db.collection('users').doc(currentUser.uid).collection(type==='expense'?'expenses':'incomes').doc(id).delete();
-            else { if (type==='expense') expenses=expenses.filter(e=>e.id!==id); else incomes=incomes.filter(i=>i.id!==id); saveLocalData(); renderAll(); }
-        }
+
+        // Clear All
         document.getElementById('clearAllBtn').addEventListener('click', async () => {
             if (!expenses.length && !incomes.length) return showToast('Nothing to clear');
             if (confirm('Delete all transactions?')) {
@@ -809,57 +820,189 @@
                 showToast('All cleared!');
             }
         });
-        document.addEventListener('click', e => {
-            if (e.target.classList.contains('del-btn')) deleteItem(e.target.dataset.id, e.target.dataset.type);
-        });
+
+        document.addEventListener('click', e => { if (e.target.classList.contains('del-btn')) deleteItem(e.target.dataset.id, e.target.dataset.type); });
         document.getElementById('filterRowContainer').addEventListener('click', e => {
-            const btn = e.target.closest('.btn-outline');
-            if (!btn) return;
+            const btn = e.target.closest('.btn-outline'); if (!btn) return;
             document.querySelectorAll('#filterRowContainer .btn-outline').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.dataset.filter;
-            renderAll();
+            btn.classList.add('active'); currentFilter = btn.dataset.filter; renderAll();
         });
         document.getElementById('monthFilterSelect').addEventListener('change', function() { currentMonthFilter = this.value; renderAll(); });
         document.getElementById('thisMonthBtn').addEventListener('click', () => {
             currentMonthFilter = getCurrentMonthKey();
-            document.getElementById('monthFilterSelect').value = currentMonthFilter;
-            renderAll();
+            document.getElementById('monthFilterSelect').value = currentMonthFilter; renderAll();
         });
         document.getElementById('themeToggle').addEventListener('click', toggleTheme);
         document.getElementById('currencySelect').addEventListener('change', function() {
-            currency = this.value;
-            if (currentUser) db.collection('users').doc(currentUser.uid).set({currency},{merge:true}); else saveLocalData();
+            currency = this.value; if (currentUser) db.collection('users').doc(currentUser.uid).set({currency},{merge:true}); else saveLocalData();
             renderAll();
         });
-        // 🆕 Gradient theme change handler
         document.getElementById('gradientThemeSelect').addEventListener('change', function() {
-            gradientTheme = this.value;
-            applyGradientTheme();
+            gradientTheme = this.value; applyGradientTheme();
             if (currentUser) db.collection('users').doc(currentUser.uid).set({gradientTheme},{merge:true}); else saveLocalData();
+        });
+
+        // Debt/Loan Tracker
+        function renderDebtsList() {
+            const container = document.getElementById('debtsListContainer');
+            if (!container) return;
+            const sorted = [...debts].sort((a,b) => new Date(b.dateAdded||0) - new Date(a.dateAdded||0));
+            container.innerHTML = sorted.length ? '' : '<div style="text-align:center;padding:20px;">No debts recorded</div>';
+            sorted.forEach(debt => {
+                const isPaid = debt.status === 'paid';
+                const div = document.createElement('div');
+                div.className = 'debt-item';
+                div.innerHTML = `
+                    <div class="debt-info">
+                        <strong>${escape(debt.description)}</strong> (${escape(debt.person)})<br>
+                        <span style="font-size:0.75rem;">Due: ${debt.dueDate ? dateFmt(debt.dueDate) : 'N/A'} | Status: <span class="debt-status" style="background:${isPaid ? '#d1fae5' : '#fee2e2'}; color:${isPaid ? '#065f46' : '#991b1b'}">${debt.status.toUpperCase()}</span></span>
+                    </div>
+                    <div class="debt-amount" style="color:${debt.type==='lend' ? 'var(--income-green)' : 'var(--danger)'}">
+                        ${debt.type==='lend' ? '+' : '-'}${fmt(debt.amount)}
+                    </div>
+                    <button class="btn-icon edit-icon edit-debt-btn" data-id="${debt.id}" title="Edit">✏️</button>
+                    <button class="btn-icon delete-icon del-debt-btn" data-id="${debt.id}" title="Delete">🗑️</button>
+                    ${!isPaid ? `<button class="btn-icon" style="color:var(--accent-green);" onclick="markDebtPaid('${debt.id}')" title="Mark Paid">✅</button>` : ''}
+                `;
+                container.appendChild(div);
+            });
+            updateDebtSummary();
+        }
+
+        function updateDebtSummary() {
+            const totalOwed = debts.filter(d => d.type === 'borrow').reduce((s,d) => s + (d.status==='unpaid'? d.amount : 0), 0);
+            const totalLend = debts.filter(d => d.type === 'lend').reduce((s,d) => s + (d.status==='unpaid'? d.amount : 0), 0);
+            const net = totalLend - totalOwed;
+            document.getElementById('totalOwed').textContent = fmt(totalOwed);
+            document.getElementById('totalLend').textContent = fmt(totalLend);
+            document.getElementById('netDebt').textContent = fmt(net);
+        }
+
+        async function addOrUpdateDebt(e) {
+            e.preventDefault();
+            const desc = document.getElementById('debtDesc').value.trim();
+            const amount = parseFloat(document.getElementById('debtAmount').value);
+            const type = document.getElementById('debtType').value;
+            const person = document.getElementById('debtPerson').value.trim();
+            const dueDate = document.getElementById('debtDueDate').value;
+            const status = document.getElementById('debtStatus').value;
+            if (!desc || isNaN(amount) || amount<=0 || !person) return showToast('Fill required fields', 'error');
+            const debtData = { description: desc, amount, type, person, dueDate, status, dateAdded: new Date().toISOString() };
+
+            if (editingDebtId) {
+                if (currentUser) {
+                    await db.collection('users').doc(currentUser.uid).collection('debts').doc(editingDebtId).update(debtData);
+                } else {
+                    const idx = debts.findIndex(d => d.id === editingDebtId);
+                    if (idx>-1) debts[idx] = { id: editingDebtId, ...debtData };
+                    saveLocalData(); renderDebtsList();
+                }
+                cancelDebtEdit();
+                showToast('Debt updated!');
+            } else {
+                if (currentUser) {
+                    await db.collection('users').doc(currentUser.uid).collection('debts').add(debtData);
+                } else {
+                    const newDebt = { id: 'd'+Date.now(), ...debtData };
+                    debts.push(newDebt); saveLocalData(); renderDebtsList();
+                }
+                showToast('Debt added!');
+            }
+            document.getElementById('debtForm').reset();
+            document.getElementById('debtDueDate').value = '';
+            if (editingDebtId) cancelDebtEdit();
+        }
+
+        async function deleteDebt(id) {
+            if (confirm('Delete this debt?')) {
+                if (currentUser) {
+                    await db.collection('users').doc(currentUser.uid).collection('debts').doc(id).delete();
+                } else {
+                    debts = debts.filter(d => d.id !== id); saveLocalData(); renderDebtsList();
+                }
+            }
+        }
+
+        window.markDebtPaid = async function(id) {
+            const debt = debts.find(d => d.id === id);
+            if (!debt) return;
+            const newStatus = debt.status === 'paid' ? 'unpaid' : 'paid';
+            if (currentUser) {
+                await db.collection('users').doc(currentUser.uid).collection('debts').doc(id).update({ status: newStatus });
+            } else {
+                const idx = debts.findIndex(d => d.id === id);
+                if (idx>-1) debts[idx].status = newStatus;
+                saveLocalData(); renderDebtsList();
+            }
+        };
+
+        function editDebt(id) {
+            const debt = debts.find(d => d.id === id);
+            if (!debt) return;
+            document.getElementById('debtDesc').value = debt.description;
+            document.getElementById('debtAmount').value = debt.amount;
+            document.getElementById('debtType').value = debt.type;
+            document.getElementById('debtPerson').value = debt.person;
+            document.getElementById('debtDueDate').value = debt.dueDate || '';
+            document.getElementById('debtStatus').value = debt.status;
+            editingDebtId = id;
+            document.getElementById('editingDebtId').value = id;
+            document.querySelector('#debtForm button[type="submit"]').textContent = '✏️ Update Debt';
+            document.getElementById('cancelDebtEdit').style.display = 'block';
+        }
+
+        function cancelDebtEdit() {
+            editingDebtId = null;
+            document.getElementById('editingDebtId').value = '';
+            document.querySelector('#debtForm button[type="submit"]').textContent = '➕ Add Debt';
+            document.getElementById('cancelDebtEdit').style.display = 'none';
+            document.getElementById('debtForm').reset();
+            document.getElementById('debtDueDate').value = '';
+        }
+
+        // Debt Modal Events
+        document.getElementById('debtModalBtn').addEventListener('click', () => {
+            document.getElementById('debtModal').style.display = 'flex';
+            renderDebtsList();
+        });
+        document.getElementById('closeDebtModal').addEventListener('click', () => document.getElementById('debtModal').style.display = 'none');
+        document.getElementById('debtForm').addEventListener('submit', addOrUpdateDebt);
+        document.getElementById('cancelDebtEdit').addEventListener('click', cancelDebtEdit);
+        document.getElementById('debtsListContainer').addEventListener('click', e => {
+            const btn = e.target;
+            if (btn.classList.contains('edit-debt-btn')) editDebt(btn.dataset.id);
+            else if (btn.classList.contains('del-debt-btn')) deleteDebt(btn.dataset.id);
         });
 
         // Report generation
         function generateReport() {
-            const sym = getSymbol();
-            const now = new Date().toLocaleString();
+            const sym = getSymbol(); const now = new Date().toLocaleString();
             const userInfo = currentUser ? (currentUser.email || 'Anonymous') : 'Local';
-            const curKey = getCurrentMonthKey();
-            const spentThisMonth = {};
-            expenses.forEach(exp => { if (getMonthKey(exp.date)===curKey) spentThisMonth[exp.category] = (spentThisMonth[exp.category]||0) + exp.amount; });
-            let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Report</title><style>body{font-family:Segoe UI;color:#1f2937;padding:40px;max-width:800px;margin:auto} h1{color:#4f46e5} table{width:100%;border-collapse:collapse;margin:20px 0} th,td{text-align:left;padding:10px;border-bottom:1px solid #e5e7eb} th{background:#f3f4f6} .amt{text-align:right} @media print{body{padding:20px}}</style></head><body><h1>💰 Expense Report</h1><p>${now} | ${userInfo}</p><h2>📊 Category Budgets (${formatMonthLabel(curKey)})</h2><table><tr><th>Category</th><th>Budget</th><th>Spent</th><th>Remaining</th><th>%</th></tr>`;
+            const monthKey = currentMonthFilter !== 'all' ? currentMonthFilter : null;
+            const periodLabel = monthKey ? formatMonthLabel(monthKey) : 'All Time';
+            const spentData = {};
+            expenses.forEach(exp => { if (monthKey ? getMonthKey(exp.date) === monthKey : true) spentData[exp.category] = (spentData[exp.category]||0) + exp.amount; });
+            let catTableRows = '';
             Object.keys(categories).forEach(cat => {
-                const cfg = categories[cat];
-                const budget = categoryBudgets[cat] || 0, spent = spentThisMonth[cat] || 0, remain = budget - spent, pct = budget>0? Math.round((spent/budget)*100) : 0;
-                html += `<tr><td>${cfg.icon} ${cfg.label}</td><td class="amt">${sym}${budget.toFixed(2)}</td><td class="amt">${sym}${spent.toFixed(2)}</td><td class="amt">${sym}${remain.toFixed(2)}</td><td class="amt">${pct}%</td></tr>`;
+                const spent = spentData[cat]||0; if (spent===0) return;
+                const cfg = categories[cat]; const budget = categoryBudgets[cat]||0;
+                const remain = budget - spent; const pct = budget>0 ? Math.round((spent/budget)*100) : 0;
+                catTableRows += `<tr><td>${cfg.icon} ${cfg.label}</td><td class="amt">${sym}${budget.toFixed(2)}</td><td class="amt">${sym}${spent.toFixed(2)}</td><td class="amt ${spent>budget?'over':''}">${sym}${remain.toFixed(2)}</td><td class="amt ${spent>budget?'over':''}">${pct}%</td></tr>`;
             });
-            html += `</table><h2>📋 All Expenses</h2><table><tr><th>Description</th><th>Amount</th><th>Category</th><th>Date</th></tr>`;
-            [...expenses].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(exp => {
-                const cfg = categories[exp.category] || {icon:'📦',label:exp.category};
-                html += `<tr><td>${escape(exp.desc)}</td><td class="amt">-${sym}${exp.amount.toFixed(2)}</td><td>${cfg.icon} ${cfg.label}</td><td>${dateFmt(exp.date)}</td></tr>`;
+            const reportExpenses = monthKey ? expenses.filter(e=>getMonthKey(e.date)===monthKey).sort((a,b)=>new Date(b.date)-new Date(a.date)) : [...expenses].sort((a,b)=>new Date(b.date)-new Date(a.date));
+            let expensesRows = '';
+            reportExpenses.forEach(exp => {
+                const cfg = categories[exp.category]||{icon:'📦',label:exp.category};
+                expensesRows += `<tr><td>${escape(exp.desc)}</td><td>${cfg.icon} ${cfg.label}</td><td>${dateFmt(exp.date)}</td><td class="amt">-${sym}${exp.amount.toFixed(2)}</td></tr>`;
             });
-            const totalExp = expenses.reduce((s,e)=>s+e.amount,0), totalInc = incomes.reduce((s,i)=>s+i.amount,0), net = totalInc - totalExp;
-            html += `<tr style="font-weight:bold"><td colspan="3">Total Expenses</td><td class="amt">${sym}${totalExp.toFixed(2)}</td></tr><tr style="font-weight:bold"><td colspan="3">Total Income</td><td class="amt">${sym}${totalInc.toFixed(2)}</td></tr><tr style="font-weight:bold"><td colspan="3">Net Balance</td><td class="amt" style="color:${net>=0?'#10b981':'#ef4444'}">${sym}${net.toFixed(2)}</td></tr></table></body></html>`;
+            const totalExp = reportExpenses.reduce((s,e)=>s+e.amount,0), totalInc = incomes.reduce((s,i)=>s+i.amount,0), net = totalInc-totalExp;
+            let html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Report</title><style>body{font-family:Segoe UI;color:#1f2937;padding:30px;max-width:900px;margin:auto} h1{color:#4f46e5} table{width:100%;border-collapse:collapse;margin:20px 0} th,td{text-align:left;padding:8px;border-bottom:1px solid #e5e7eb} th{background:#f3f4f6;font-weight:600} .amt{text-align:right} .over{color:#ef4444;font-weight:bold} @media print{body{padding:20px}}</style></head><body>
+            <h1>💰 Expense Report</h1><p>${now} | ${userInfo}</p><h2>📊 Category Budgets (${periodLabel})</h2>
+            <table><thead><tr><th>Category</th><th class="amt">Budget</th><th class="amt">Spent</th><th class="amt">Remaining</th><th class="amt">%</th></tr></thead><tbody>${catTableRows||'<tr><td colspan="5">No categories with spending</td></tr>'}</tbody></table>
+            <h2>📋 Expenses (${periodLabel})</h2><table><thead><tr><th>Description</th><th>Category</th><th>Date</th><th class="amt">Amount</th></tr></thead><tbody>${expensesRows||'<tr><td colspan="4">No expenses</td></tr>'}
+            <tr style="font-weight:bold"><td colspan="3">Total Expenses</td><td class="amt">${sym}${totalExp.toFixed(2)}</td></tr>
+            <tr style="font-weight:bold"><td colspan="3">Total Income</td><td class="amt">${sym}${totalInc.toFixed(2)}</td></tr>
+            <tr style="font-weight:bold"><td colspan="3">Net Balance</td><td class="amt" style="color:${net>=0?'#10b981':'#ef4444'}">${sym}${net.toFixed(2)}</td></tr></tbody></table></body></html>`;
             const w = window.open('','_blank','width=900,height=700'); w.document.write(html); w.document.close();
         }
         document.getElementById('generateReportBtn').addEventListener('click', generateReport);
@@ -874,7 +1017,7 @@
             showToast('CSV exported!');
         });
         document.getElementById('exportJSON').addEventListener('click', () => {
-            const data = { expenses, incomes, theme, gradientTheme, currency, categoryBudgets, categories };
+            const data = { expenses, incomes, debts, theme, gradientTheme, currency, categoryBudgets, categories };
             const blob = new Blob([JSON.stringify(data)], {type:'application/json'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='backup.json'; a.click();
             showToast('JSON exported!');
@@ -886,27 +1029,28 @@
             reader.onload = async (ev) => {
                 try {
                     const d = JSON.parse(ev.target.result);
-                    expenses = d.expenses || []; incomes = d.incomes || [];
+                    expenses = d.expenses || []; incomes = d.incomes || []; debts = d.debts || [];
                     theme = d.theme || 'light'; gradientTheme = d.gradientTheme || 'default';
                     currency = d.currency || 'USD';
                     categoryBudgets = d.categoryBudgets || {};
                     categories = d.categories || {};
                     if (!categories || Object.keys(categories).length===0) categories = { ...defaultCategories };
-                    applyTheme(); applyGradientTheme();
-                    document.getElementById('currencySelect').value = currency;
+                    applyTheme(); document.getElementById('currencySelect').value = currency;
                     document.getElementById('gradientThemeSelect').value = gradientTheme;
-                    updateDynamicUI();
+                    updateDynamicUI(); renderAll(); renderDebtsList();
                     if (currentUser) {
                         const batch = db.batch();
                         (await db.collection('users').doc(currentUser.uid).collection('expenses').get()).forEach(doc=>batch.delete(doc.ref));
                         (await db.collection('users').doc(currentUser.uid).collection('incomes').get()).forEach(doc=>batch.delete(doc.ref));
+                        (await db.collection('users').doc(currentUser.uid).collection('debts').get()).forEach(doc=>batch.delete(doc.ref));
                         await batch.commit();
                         const nb = db.batch();
                         expenses.forEach(exp => nb.set(db.collection('users').doc(currentUser.uid).collection('expenses').doc(), {desc:exp.desc,amount:exp.amount,category:exp.category,date:exp.date}));
                         incomes.forEach(inc => nb.set(db.collection('users').doc(currentUser.uid).collection('incomes').doc(), {desc:inc.desc,amount:inc.amount,date:inc.date}));
+                        debts.forEach(debt => nb.set(db.collection('users').doc(currentUser.uid).collection('debts').doc(), {description:debt.description,amount:debt.amount,type:debt.type,person:debt.person,dueDate:debt.dueDate,status:debt.status,dateAdded:debt.dateAdded}));
                         await nb.commit();
                         await db.collection('users').doc(currentUser.uid).set({theme, gradientTheme, currency, categoryBudgets, categories}, {merge:true});
-                    } else { saveLocalData(); renderAll(); }
+                    } else { saveLocalData(); }
                     showToast('Import successful!', 'success');
                 } catch (err) { showToast('Invalid file', 'error'); }
             };
