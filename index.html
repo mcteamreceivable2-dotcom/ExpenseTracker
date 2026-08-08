@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💰 Expense Tracker Pro · Powered by 02403</title>
+    <title>💰 Expense Tracker Pro · Full Working</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        /* Same complete CSS as previous, unchanged */
         :root { --bg: #f0f2f5; --card-bg: #ffffff; --primary: #4f46e5; --primary-hover: #4338ca; --danger: #ef4444; --text: #1f2937; --text-light: #6b7280; --border: #e5e7eb; --accent-green: #10b981; --income-green: #059669; --shadow: 0 1px 3px rgba(0,0,0,0.06); --radius: 12px; --radius-sm: 8px; }
         body.dark { --bg: #111827; --card-bg: #1f2937; --primary: #818cf8; --primary-hover: #6366f1; --danger: #f87171; --text: #f1f5f9; --text-light: #9ca3af; --border: #374151; }
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -111,7 +112,7 @@
 
     <div id="appContent" style="display:none; flex-direction:column; flex:1;">
         <header class="header">
-            <div class="logo">💰 Expense Tracker <span style="font-size:0.8rem;">Powered by 02403</span></div>
+            <div class="logo">💰 Expense Tracker <span style="font-size:0.8rem;">Full</span></div>
             <div class="auth-area">
                 <span id="userDisplay"></span>
                 <button class="btn-outline" id="signOutBtn">🚪 Sign Out</button>
@@ -316,7 +317,7 @@
         const db = firebase.firestore();
         db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 
-        // ==================== STATE ====================
+        // State
         let expenses = [], incomes = [], debts = [];
         let currentFilter = 'all', currentMonthFilter = 'all';
         let categoryBudgets = {}, categories = {};
@@ -364,7 +365,7 @@
             toastTimer = setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        // Idle Timer (15min)
+        // Idle Timer
         const IDLE_TIMEOUT = 15 * 60 * 1000, WARNING_BEFORE = 60 * 1000;
         let idleWarningTimer, idleLogoutTimer, isUserIdle = false;
         function resetIdleTimer() {
@@ -429,7 +430,7 @@
 
         // Local data
         function loadLocalData() {
-            const raw = localStorage.getItem('expLocalFinal');
+            const raw = localStorage.getItem('expLocalFull');
             if (raw) {
                 try {
                     const d = JSON.parse(raw);
@@ -446,7 +447,7 @@
             updateDynamicUI();
             renderDebtsList();
         }
-        function saveLocalData() { if (!currentUser) localStorage.setItem('expLocalFinal', JSON.stringify({ expenses, incomes, debts, theme, gradientTheme, currency, categoryBudgets, categories })); }
+        function saveLocalData() { if (!currentUser) localStorage.setItem('expLocalFull', JSON.stringify({ expenses, incomes, debts, theme, gradientTheme, currency, categoryBudgets, categories })); }
         function setDefaults() {
             expenses = [ { id:'e1', desc:'Groceries', amount:85.5, category:'food', date:'2026-08-05' } ];
             incomes = [{ id:'i1', desc:'Salary', amount:3000, date:'2026-08-01' }];
@@ -497,6 +498,7 @@
             });
         }
 
+        // Month & Expense Helpers
         function getMonthKey(d) { const dt = new Date(d+'T00:00:00'); return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`; }
         function getCurrentMonthKey() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}`; }
         function formatMonthLabel(k) { const [y,m] = k.split('-'); return new Date(parseInt(y),parseInt(m)-1).toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
@@ -516,6 +518,7 @@
         }
         function currentMonthSpent() { const k = getCurrentMonthKey(); return expenses.filter(e=>getMonthKey(e.date)===k).reduce((s,e)=>s+e.amount,0); }
 
+        // Category Budgets Rendering
         function renderCategoryBudgetsInto(containerId) {
             const container = document.getElementById(containerId);
             const monthKey = currentMonthFilter !== 'all' ? currentMonthFilter : null;
@@ -535,7 +538,7 @@
                     <div class="spent-info">${fmt(spent)} / ${budget > 0 ? fmt(budget) : '∞'}</div>
                     <div class="mini-bar"><div class="mini-fill ${fillClass}" style="width:${pct}%; background:${pct>=100?'var(--danger)':pct>=80?'var(--accent-orange)':'var(--accent-green)'}"></div></div>
                     <button class="btn-outline edit-cat-btn" data-cat="${cat}" style="padding:2px 6px; font-size:0.7rem;">✏️</button>
-                    ${!cfg.isDefault ? `<button class="btn-danger delete-cat-btn" data-cat="${cat}" style="padding:2px 6px; font-size:0.7rem;">🗑️</button>` : ''}
+                    <button class="btn-danger delete-cat-btn" data-cat="${cat}" style="padding:2px 6px; font-size:0.7rem;">🗑️</button>
                 </div>`;
             });
             container.innerHTML = html || '<p style="color:var(--text-light);">No categories defined.</p>';
@@ -630,7 +633,7 @@
             if (sorted.length) trendChart = new Chart(ctx2, { type:'line', data:{ labels: sorted.map(k=>formatMonthLabel(k)), datasets:[{ data: sorted.map(k=>monthly[k]), borderColor:'#4f46e5', backgroundColor:'rgba(79,70,229,0.1)', fill:true, tension:0.2 }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } } });
         }
 
-        // Category actions
+        // Category Actions
         async function saveCategoriesToDb() { if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categories }, { merge: true }); else saveLocalData(); }
         async function saveCategoryBudgetsFn() {
             const inputs = document.querySelectorAll('#modalCatBudgetContainer .cat-budget-input');
@@ -655,15 +658,18 @@
             showToast(`Category "${name}" added!`);
         }
         async function deleteCategory(key) {
-            if (!categories[key] || categories[key].isDefault) return;
-            if (!confirm(`Delete category "${categories[key].label}"?`)) return;
-            delete categories[key]; delete categoryBudgets[key];
+            if (!categories[key]) return;
+            if (!confirm(`Delete category "${categories[key].label}"? This will remove its budget and it will no longer appear.`)) return;
+            delete categories[key];
+            delete categoryBudgets[key];
             await saveCategoriesToDb();
             if (currentUser) await db.collection('users').doc(currentUser.uid).set({ categoryBudgets }, { merge: true });
-            updateDynamicUI(); renderAll(); showToast('Category deleted.');
+            updateDynamicUI();
+            renderAll();
+            showToast('Category deleted.');
         }
 
-        // Budget Modal
+        // Modal Handlers
         document.getElementById('budgetModalBtn').addEventListener('click', () => {
             document.getElementById('budgetModal').style.display = 'flex';
             renderCategoryBudgetsInto('modalCatBudgetContainer');
@@ -783,18 +789,7 @@
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
 
-        async function deleteItem(id, type) {
-            if (currentUser) {
-                const collection = type==='expense' ? 'expenses' : 'incomes';
-                await db.collection('users').doc(currentUser.uid).collection(collection).doc(id).delete();
-            } else {
-                if (type==='expense') expenses = expenses.filter(e => e.id !== id);
-                else incomes = incomes.filter(i => i.id !== id);
-                saveLocalData(); renderAll();
-            }
-        }
-
-        // Income form
+        // Income & Delete
         document.getElementById('incomeForm').addEventListener('submit', e => {
             e.preventDefault();
             const desc = document.getElementById('incomeDesc').value.trim(), amount = +document.getElementById('incomeAmount').value, date = document.getElementById('incomeDate').value;
@@ -806,8 +801,6 @@
             document.getElementById('incomeDate').value = new Date().toISOString().split('T')[0];
             showToast('Income added!');
         });
-
-        // Clear All
         document.getElementById('clearAllBtn').addEventListener('click', async () => {
             if (!expenses.length && !incomes.length) return showToast('Nothing to clear');
             if (confirm('Delete all transactions?')) {
@@ -820,29 +813,19 @@
                 showToast('All cleared!');
             }
         });
-
         document.addEventListener('click', e => { if (e.target.classList.contains('del-btn')) deleteItem(e.target.dataset.id, e.target.dataset.type); });
-        document.getElementById('filterRowContainer').addEventListener('click', e => {
-            const btn = e.target.closest('.btn-outline'); if (!btn) return;
-            document.querySelectorAll('#filterRowContainer .btn-outline').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active'); currentFilter = btn.dataset.filter; renderAll();
-        });
-        document.getElementById('monthFilterSelect').addEventListener('change', function() { currentMonthFilter = this.value; renderAll(); });
-        document.getElementById('thisMonthBtn').addEventListener('click', () => {
-            currentMonthFilter = getCurrentMonthKey();
-            document.getElementById('monthFilterSelect').value = currentMonthFilter; renderAll();
-        });
-        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-        document.getElementById('currencySelect').addEventListener('change', function() {
-            currency = this.value; if (currentUser) db.collection('users').doc(currentUser.uid).set({currency},{merge:true}); else saveLocalData();
-            renderAll();
-        });
-        document.getElementById('gradientThemeSelect').addEventListener('change', function() {
-            gradientTheme = this.value; applyGradientTheme();
-            if (currentUser) db.collection('users').doc(currentUser.uid).set({gradientTheme},{merge:true}); else saveLocalData();
-        });
+        async function deleteItem(id, type) {
+            if (currentUser) {
+                const collection = type==='expense' ? 'expenses' : 'incomes';
+                await db.collection('users').doc(currentUser.uid).collection(collection).doc(id).delete();
+            } else {
+                if (type==='expense') expenses = expenses.filter(e => e.id !== id);
+                else incomes = incomes.filter(i => i.id !== id);
+                saveLocalData(); renderAll();
+            }
+        }
 
-        // Debt/Loan Tracker
+        // Debt Tracker
         function renderDebtsList() {
             const container = document.getElementById('debtsListContainer');
             if (!container) return;
@@ -868,16 +851,14 @@
             });
             updateDebtSummary();
         }
-
         function updateDebtSummary() {
-            const totalOwed = debts.filter(d => d.type === 'borrow').reduce((s,d) => s + (d.status==='unpaid'? d.amount : 0), 0);
-            const totalLend = debts.filter(d => d.type === 'lend').reduce((s,d) => s + (d.status==='unpaid'? d.amount : 0), 0);
+            const totalOwed = debts.filter(d => d.type === 'borrow' && d.status==='unpaid').reduce((s,d) => s + d.amount, 0);
+            const totalLend = debts.filter(d => d.type === 'lend' && d.status==='unpaid').reduce((s,d) => s + d.amount, 0);
             const net = totalLend - totalOwed;
             document.getElementById('totalOwed').textContent = fmt(totalOwed);
             document.getElementById('totalLend').textContent = fmt(totalLend);
             document.getElementById('netDebt').textContent = fmt(net);
         }
-
         async function addOrUpdateDebt(e) {
             e.preventDefault();
             const desc = document.getElementById('debtDesc').value.trim();
@@ -912,7 +893,6 @@
             document.getElementById('debtDueDate').value = '';
             if (editingDebtId) cancelDebtEdit();
         }
-
         async function deleteDebt(id) {
             if (confirm('Delete this debt?')) {
                 if (currentUser) {
@@ -922,7 +902,6 @@
                 }
             }
         }
-
         window.markDebtPaid = async function(id) {
             const debt = debts.find(d => d.id === id);
             if (!debt) return;
@@ -935,7 +914,6 @@
                 saveLocalData(); renderDebtsList();
             }
         };
-
         function editDebt(id) {
             const debt = debts.find(d => d.id === id);
             if (!debt) return;
@@ -950,7 +928,6 @@
             document.querySelector('#debtForm button[type="submit"]').textContent = '✏️ Update Debt';
             document.getElementById('cancelDebtEdit').style.display = 'block';
         }
-
         function cancelDebtEdit() {
             editingDebtId = null;
             document.getElementById('editingDebtId').value = '';
@@ -960,7 +937,6 @@
             document.getElementById('debtDueDate').value = '';
         }
 
-        // Debt Modal Events
         document.getElementById('debtModalBtn').addEventListener('click', () => {
             document.getElementById('debtModal').style.display = 'flex';
             renderDebtsList();
@@ -974,7 +950,7 @@
             else if (btn.classList.contains('del-debt-btn')) deleteDebt(btn.dataset.id);
         });
 
-        // Report generation
+        // Report & Export/Import (same as before)
         function generateReport() {
             const sym = getSymbol(); const now = new Date().toLocaleString();
             const userInfo = currentUser ? (currentUser.email || 'Anonymous') : 'Local';
@@ -1007,7 +983,6 @@
         }
         document.getElementById('generateReportBtn').addEventListener('click', generateReport);
 
-        // Export/Import
         document.getElementById('exportCSV').addEventListener('click', () => {
             const rows = [['Type','Description','Amount','Category','Date']];
             expenses.forEach(e => rows.push(['Expense', e.desc, e.amount, e.category, e.date]));
